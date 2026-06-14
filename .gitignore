@@ -1,6 +1,6 @@
-# Datasets and processed data
-data/
-Dataset/
+# Datasets and processed data — anchored to repo root (no leading / = matches nested dirs too)
+/data/
+/Dataset/
 
 # Training outputs
 results/
