@@ -1,0 +1,16 @@
+# Dataset and resource paths — Linux training box (RTX 4090)
+# Selected via IRIS_ENV=linux
+# TODO: fill in actual paths before Stage D training
+
+polyu_root: "~/datasets/polyu_iris_database/PolyU_Cross_Submit"
+polyu_session1_raw: "~/datasets/polyu_iris_database/PolyU_Cross_Submit/PolyU_Cross_Session_1/PolyU_Cross_Iris"
+polyu_session1_norm: "~/datasets/polyu_iris_database/PolyU_Cross_Submit/PolyU_Cross_Session_1/PolyU_Cross_Norm_Unenhanced"
+
+cuviris_root: "~/datasets/CUVIRIS"
+
+weights_dir: "./weights"
+processed_dir: "./data/processed"
+ipgan_dataset_dir: "./Dataset"
+protocols_dir: "./Protocols"
+results_dir: "./results"
+checkpoint_dir: "./checkpoint"

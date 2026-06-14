@@ -1,0 +1,15 @@
+# Dataset and resource paths — Windows dev machine
+# Selected via IRIS_ENV=windows (default)
+
+polyu_root: "C:/dev/polyu_iris_database/PolyU_Cross_Submit"
+polyu_session1_raw: "C:/dev/polyu_iris_database/PolyU_Cross_Submit/PolyU_Cross_Session_1/PolyU_Cross_Iris"
+polyu_session1_norm: "C:/dev/polyu_iris_database/PolyU_Cross_Submit/PolyU_Cross_Session_1/PolyU_Cross_Norm_Unenhanced"
+
+cuviris_root: "C:/dev/CUVIRIS"
+
+weights_dir: "./weights"
+processed_dir: "./data/processed"
+ipgan_dataset_dir: "./Dataset"
+protocols_dir: "./Protocols"
+results_dir: "./results"
+checkpoint_dir: "./checkpoint"

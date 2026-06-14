@@ -1,0 +1,25 @@
+# Normalize line endings to LF on commit (critical for Windows/Linux interop)
+* text=auto eol=lf
+
+# Explicit text files
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.txt text eol=lf
+*.csv text eol=lf
+*.json text eol=lf
+
+# Binary files — never normalize
+*.pth binary
+*.pt binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tiff binary
+*.tif binary
+*.bmp binary
+*.pkl binary
+*.npy binary
+*.npz binary
