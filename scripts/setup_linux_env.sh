@@ -26,7 +26,8 @@ pip install \
     tqdm \
     matplotlib \
     pyeer \
-    einops
+    einops \
+    timm
 
 echo "=== Verifying ==="
 python -c "

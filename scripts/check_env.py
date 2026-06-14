@@ -177,7 +177,8 @@ else:
 
     # iris-fm-tools (may fail without full dinov3 env — warn only)
     try:
-        from iris_fm_tools.inference import load_dino
+        sys.path.insert(0, str(PROJECT_ROOT / "vendor" / "iris_fm_tools"))
+        from inference import load_dino
         check("iris-fm-tools importable", True)
     except Exception as e:
         warn("iris-fm-tools importable", False, str(e))

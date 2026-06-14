@@ -394,24 +394,24 @@ def predict(model, img_rgb_np, device='cpu', thr_iris=0.5, thr_pupil=0.5, do_pos
 def main():
     ap = argparse.ArgumentParser("Test iris segmentation (diagnostics)")
 
-# --- Default arguments injected (can be overridden on CLI) ---
-ap.set_defaults(
-    root=r".\data",
-    test_split=r".\data\test.txt",
-    checkpoint=r"runs\train\best_mobilenetv3.pt",
-    backbone="mobilenetv3",
-    use_ellipse=True,
-    extra_decoder_conv=True,
-    pupil_refine_depth=1,
-    amp=True,
-    save_overlay=True,
-    export_dir=r"runs\irisparsenet_aug_all\miche_diag",
-    thr_iris=0.5,
-    thr_pupil=0.5,
-    containment_mode="soft",
-    inside_thresh=0.85,
-    keep_area_frac=0.90
-)
+    # --- Default arguments injected (can be overridden on CLI) ---
+    ap.set_defaults(
+        root=r".\data",
+        test_split=r".\data\test.txt",
+        checkpoint=r"runs\train\best_mobilenetv3.pt",
+        backbone="mobilenetv3",
+        use_ellipse=True,
+        extra_decoder_conv=True,
+        pupil_refine_depth=1,
+        amp=True,
+        save_overlay=True,
+        export_dir=r"runs\irisparsenet_aug_all\miche_diag",
+        thr_iris=0.5,
+        thr_pupil=0.5,
+        containment_mode="soft",
+        inside_thresh=0.85,
+        keep_area_frac=0.90
+    )
     ap.add_argument('--root', type=str, required=False)
     ap.add_argument('--test_split', type=str, required=False)
     ap.add_argument('--images_dir', type=str, default='images')
