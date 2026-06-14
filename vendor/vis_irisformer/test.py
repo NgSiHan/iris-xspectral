@@ -19,8 +19,6 @@ from batch_data import CSVDataset, TestDataset
 import pandas as pd
 from sklearn.metrics import roc_curve
 
-from pyeer.eer_info import get_eer_stats
-from pyeer.report import generate_eer_report, export_error_rates
 
 torch.backends.cudnn.bencmark = True
 
@@ -161,7 +159,7 @@ class Tester(object):
         if self.check_path is None:
             raise FileNotFoundError('Not given any pre-trained model path.')
         
-        ckpt_dict = torch.load(self.check_path, map_location="cpu")
+        ckpt_dict = torch.load(self.check_path, map_location="cpu", weights_only=False)
         ckpt_dict_filtered = {k:v for k, v in ckpt_dict['mae_model'].items() if 'ft' not in k}
         self.model.load_state_dict(ckpt_dict_filtered, strict=False)
 
@@ -255,6 +253,8 @@ class Tester(object):
         print('RESULTS: EER {:.4f} | R@A1e-1 {:.4f} | R@A1e-3 {:.4f} | R@A1e-5 {:.4f}\n'.format(eer,prec1,prec2,prec3))
 
         if self.args.save_report:
+            from pyeer.eer_info import get_eer_stats
+            from pyeer.report import generate_eer_report, export_error_rates
             stats = get_eer_stats(distance_genuine.tolist(), distance_impostor.tolist(), ds_scores=False)
             generate_eer_report([stats], [self.config.data_name], self.save_path+'/'+self.config.data_name+'_report.csv')
             export_error_rates(stats.fmr, stats.fnmr, self.save_path+'/'+self.config.data_name+'_det.csv' )

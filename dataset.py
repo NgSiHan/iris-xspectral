@@ -27,7 +27,7 @@ class ContrastiveDataset(Dataset):
         for i in range(len(self.VIS)):
             # contruct the positive pair correspondence
             img_address = self.VIS.imgs[i][0]
-            if(self.args.linux==True):
+            if self.args.linux:
                 id = img_address.split('/')[-2]
             else:
                 id1 = img_address.split('/')
@@ -54,7 +54,7 @@ class ContrastiveDataset(Dataset):
 
         if(self.args.train==True):
             img_address = self.VIS.imgs[index][0]
-            if(self.args.linux==True):
+            if self.args.linux:
                 id = img_address.split('/')[-2]
             else:
                 id1 = img_address.split('/')
@@ -67,7 +67,7 @@ class ContrastiveDataset(Dataset):
 
         else:
             img_address = self.VIS.imgs[index][0]
-            if(self.args.linux==True):
+            if self.args.linux:
                 id = img_address.split('/')[-2]
             else:
                 id1 = img_address.split('/')
@@ -78,8 +78,7 @@ class ContrastiveDataset(Dataset):
         return img_0, img_1,same_class,label_0,lbl_1,id
 
     def __len__(self):
-        # return min(len(self.morph), len(self.photo))
-        return len(self.NIR)
+        return min(len(self.VIS), len(self.NIR))
 
 def get_padding(image):    
     w, h = image.size
