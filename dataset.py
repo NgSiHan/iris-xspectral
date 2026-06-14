@@ -52,7 +52,7 @@ class ContrastiveDataset(Dataset):
         same_class = same_class > self.positive_prob
         img_0, label_0 = self.VIS[index]
 
-        if(self.args.train==True):
+        if self.args.train:
             img_address = self.VIS.imgs[index][0]
             if self.args.linux:
                 id = img_address.split('/')[-2]
@@ -118,7 +118,7 @@ def get_dataset(args):
     std = [0.5, 0.5, 0.5]
     resize = transforms.Resize(size=(256,
             256))
-    if(args.train==True):
+    if args.train:
         if args.modality=="normalized":
             VIS_dataset = datasets.ImageFolder(
             args.VIS_folder,
@@ -204,7 +204,7 @@ def create_dataloader(args):
             transform=trainTransforms)
     valNIR = ImageFolder(root=args.NIR_folder, 
             transform=valTransforms)
-    if(args.transfer==True):
+    if args.transfer:
         transferVIS= ImageFolder(root=args.orig_folder, 
              transform=trainTransforms)
     else:

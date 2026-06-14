@@ -30,6 +30,7 @@ for data in datasets_to_run:
     parser.add_argument('--epochs', default=500, type=int, help='Number of epochs to run the model')
     parser.add_argument('--train', default=True, help='Train=True,Test=False')
     parser.add_argument('--save_folder', type=str,default='./checkpoint/',help='path to save the checkpoints')
+    parser.add_argument('--save_every', default=50, type=int, help='save a separate checkpoint every N epochs')
     parser.add_argument('--transfer',default=False,help='if you would like to transfer num_classes from previous model')
     parser.add_argument('--linux',default=False,help='if linux system is running the code (True) or Windows(False)')
     parser.add_argument('--verbose',default=True,help='if you would to log output images periodically during training')
@@ -64,7 +65,7 @@ for data in datasets_to_run:
     else:
         net_1=UNet(feat_dim=256)
         net_2=UNet(feat_dim=256)
-    if(args.patch_gan==True):
+    if args.patch_gan:
         disc_1 = NLayerDiscriminator(input_nc=3)
         disc_2 = NLayerDiscriminator(input_nc=3)
     else:
@@ -78,8 +79,8 @@ for data in datasets_to_run:
     net_2.to(device)
     net_2.train()
     # If loading from checkpoint, load dictionaries, start epoch
-    if(args.continue_old==True):
-        state=torch.load(args.save_folder + args.model_name+ '.pt')
+    if args.continue_old:
+        state=torch.load(args.save_folder + args.model_name+ '.pt', weights_only=False)
         disc_1.load_state_dict(state["disc_1"])
         disc_2.load_state_dict(state["disc_2"])
         net_1.load_state_dict(state["net_1"])
@@ -110,7 +111,7 @@ for data in datasets_to_run:
     D_2_scheduler=torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer_D_2,gamma=decay_rate)
 
     # If classifier will be competing with generator
-    if(args.three_player==True):
+    if args.three_player:
         C_1_scheduler=torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer_C_1,gamma=decay_rate)
 
     # Initialize loss functions and networks 
@@ -160,7 +161,7 @@ for data in datasets_to_run:
             bs = img_1.size(0)
             img_1, img_2, lbl = img_1.to(device), img_2.to(device), lbl.type(torch.float).to(device)
 
-            if(args.patch_gan==True):
+            if args.patch_gan:
                 if(args.modality=='normalized'):
                     valid = Variable(torch.rand(bs, 1,6,62) * 0.5 + 0.7,requires_grad=False).to(device)
                     fake = Variable(torch.rand(bs, 1,6,62) * 0.3,requires_grad=False).to(device)
@@ -175,7 +176,7 @@ for data in datasets_to_run:
             fake_2,_ = net_1(img_1)
             # Recognition loss from classifier
             if(args.rec_loss>0):
-                if(args.three_player==True):
+                if args.three_player:
                     # Only update according to update ratio
                     if(iteration%args.update_ratio==0):
                         rec_fake_2,_=netR(fake_2)
@@ -208,7 +209,7 @@ for data in datasets_to_run:
             pred_fake_2 = disc_2(fake_2)
             pred_real_2 = disc_2(img_2).detach()
             # Relativistic GAN (https://arxiv.org/abs/1807.00734) or standard GAN
-            if(args.relativistic==True):
+            if args.relativistic:
                 loss_GAN_Fake_2 = adversarial_loss(pred_fake_2 - torch.mean(pred_real_2), valid)
             else:
                 loss_GAN_Fake_2 = adversarial_loss(pred_fake_2, valid)
@@ -230,7 +231,7 @@ for data in datasets_to_run:
             fake_1,_ = net_2(img_2)
             
             if(args.rec_loss>0):
-                if(args.three_player==True):
+                if args.three_player:
                     # Only update according to update ratio
                     if(iteration%args.update_ratio==0):
                         rec_real_1,_=netR(img_1)
@@ -266,7 +267,7 @@ for data in datasets_to_run:
             pred_fake_1 = disc_1(fake_1)
             pred_real_1 = disc_1(img_1).detach()
             # Relativistic GAN (https://arxiv.org/abs/1807.00734) or standard GAN
-            if(args.relativistic==True):
+            if args.relativistic:
                 loss_GAN_Fake_1 = adversarial_loss(pred_fake_1 - torch.mean(pred_real_1), valid)
             else:
                 loss_GAN_Fake_1 = adversarial_loss(pred_fake_1, valid)
@@ -290,7 +291,7 @@ for data in datasets_to_run:
                 pred_fake_2 = disc_2(fake_2.detach())
 
                 if(epoch>=args.classifier_pretrain):
-                    if(args.relativistic==True):
+                    if args.relativistic:
                         d_loss_1 = (adversarial_loss(pred_fake_1-torch.mean(pred_real_1), fake) +
                                     adversarial_loss(pred_real_1-torch.mean(pred_fake_1), valid))/2
                         d_loss_2 = (adversarial_loss(pred_fake_2-torch.mean(pred_real_2), fake) +
@@ -348,7 +349,7 @@ for data in datasets_to_run:
                                 same=1
             
             iteration+=1
-        if(args.use_lr_decay==True):
+        if args.use_lr_decay:
                 G_1_scheduler.step()
                 D_1_scheduler.step() 
                 G_2_scheduler.step()
@@ -366,4 +367,7 @@ for data in datasets_to_run:
         state['disc_2'] = disc_2.state_dict()   
         state['epoch'] = epoch
         torch.save(state, args.save_folder + args.model_name + '.pt')
+        if args.save_every > 0 and (epoch + 1) % args.save_every == 0:
+            torch.save(state, args.save_folder + args.model_name + f'_epoch{epoch+1:03d}.pt')
+            print(f'\ncheckpoint saved at epoch {epoch+1}!\n')
         print('\nmodel saved!\n')
