@@ -40,12 +40,12 @@ def main():
     paths = load_paths()
 
     processed_dir = (
-        Path(args.processed_dir)
+        Path(args.processed_dir).resolve()
         if args.processed_dir
         else Path(paths["processed_dir"]) / args.dataset
     )
     gallery_dir = (
-        Path(args.gallery_dir)
+        Path(args.gallery_dir).resolve()
         if args.gallery_dir
         else Path(paths["processed_dir"]) / "gallery_synthVIS"
     )
